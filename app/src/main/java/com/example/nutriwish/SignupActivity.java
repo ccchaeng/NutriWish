@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,12 +15,19 @@ public class SignupActivity extends AppCompatActivity {
 
     TextView back;
     EditText name,id,pw,pw2,email,birthyear,birthdate,birthday;
+    RadioButton radio_men, radio_women;
+    RadioGroup radioGroup;
     Button pwcheck, submit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        radio_men = findViewById(R.id.radio_men);
+        radio_women = findViewById(R.id.radio_women);
+        radioGroup = findViewById(R.id.radio_gruop);
+
 
         //뒤로 가기 버튼
         back = findViewById(R.id.back);
