@@ -110,6 +110,28 @@
                     android:textColor="@color/black"
                     android:textColorHint="#D3D3D3"/>
 
+                <RadioGroup
+                    android:id="@+id/radio_gruop"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radio_men"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="남자"/>
+
+                    <RadioButton
+                        android:id="@+id/radio_women"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="여자"/>
+                </RadioGroup>
+
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
