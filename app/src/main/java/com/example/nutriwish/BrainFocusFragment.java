@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.fragment.app.FragmentManager;
 
 public class BrainFocusFragment extends Fragment {
 
@@ -12,7 +14,21 @@ public class BrainFocusFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_immunity, container, false);
+        View view = inflater.inflate(R.layout.fragment_brain_focus, container, false);
+
+        // Back 버튼을 찾아 클릭 리스너 추가
+        TextView backButton = view.findViewById(R.id.back);
+        backButton.setOnClickListener(v -> {
+            // 뒤로가기 구현: FragmentManager를 사용해 이전 프래그먼트로 이동
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() > 0) {
+                fragmentManager.popBackStack(); // 카테고리 프래그먼트로 돌아가기
+            } else {
+                // 만약 백스택에 프래그먼트가 없으면 액티비티 종료
+                requireActivity().onBackPressed();
+            }
+        });
+
+        return view;
     }
 }
-
