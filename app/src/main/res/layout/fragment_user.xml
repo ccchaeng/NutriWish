@@ -7,146 +7,190 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- 이름  -->
+    <!-- 프로필 이미지 -->
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="71dp"
+        android:layout_height="97dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:contentDescription="프로필 이미지"
+        android:src="@drawable/profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 이름 -->
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:padding="16dp"
+        android:layout_marginStart="16dp"
+        android:padding="8dp"
         android:text="이름"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/profileImage"
+        app:layout_constraintTop_toTopOf="@id/profileImage" />
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="이름 입력"
-        app:layout_constraintTop_toBottomOf="@id/tvName"
-        app:layout_constraintStart_toStartOf="parent"
+        android:enabled="false"
+        android:padding="8dp"
+        android:minHeight="48dp"
+        android:layout_marginHorizontal="8dp"
+        app:layout_constraintStart_toEndOf="@id/tvName"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="16dp"
-        android:layout_marginHorizontal="16dp"
-        android:enabled="false" />
+        app:layout_constraintTop_toTopOf="@id/tvName" />
 
     <!-- 생년월일 -->
-
     <TextView
         android:id="@+id/tvBirthDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="생년월일 (YYYY-MM-DD)"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:text="생년월일"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etName" />
+        app:layout_constraintStart_toEndOf="@id/profileImage"
+        app:layout_constraintTop_toBottomOf="@id/tvName" />
 
     <EditText
         android:id="@+id/etBirthDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="생년월일 입력"
-        app:layout_constraintTop_toBottomOf="@id/tvBirthDate"
-        app:layout_constraintStart_toStartOf="parent"
+        android:enabled="false"
+        android:padding="8dp"
+        android:minHeight="48dp"
+        android:layout_marginHorizontal="8dp"
+        app:layout_constraintStart_toEndOf="@id/tvBirthDate"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="16dp"
-        android:layout_marginHorizontal="16dp"
-        android:enabled="false" />
+        app:layout_constraintTop_toBottomOf="@id/etName" />
+
+    <!-- 아이디 -->
+    <TextView
+        android:id="@+id/tvId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="아이디"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etBirthDate" />
+
+    <EditText
+        android:id="@+id/etId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:enabled="false"
+        android:hint="아이디 입력"
+        android:padding="8dp"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvId"
+        app:layout_constraintTop_toBottomOf="@id/etBirthDate" />
+
+    <!-- 비밀번호 -->
+    <TextView
+        android:id="@+id/tvPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="비밀번호"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etId" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:hint="비밀번호 입력"
+        android:inputType="textPassword"
+        android:padding="8dp"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvPassword"
+        app:layout_constraintTop_toBottomOf="@id/etId" />
 
     <!-- 성별 -->
-
     <TextView
         android:id="@+id/tvGender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:layout_marginTop="32dp"
+        android:padding="8dp"
         android:text="성별"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etBirthDate" />
+        app:layout_constraintTop_toBottomOf="@id/etPassword" />
 
     <RadioGroup
         android:id="@+id/rgGender"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="1dp"
-        app:layout_constraintTop_toBottomOf="@id/tvGender"
-        app:layout_constraintStart_toStartOf="parent"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@id/tvGender"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="16dp">
+        app:layout_constraintTop_toBottomOf="@id/etPassword">
 
         <RadioButton
             android:id="@+id/rbMale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="남" />
+            android:text="남"
+            android:enabled="false" />
 
         <RadioButton
             android:id="@+id/rbFemale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="여" />
-
+            android:text="여"
+            android:enabled="false" />
     </RadioGroup>
 
-    <!-- 나이 -->
-    <TextView
-        android:id="@+id/tvAge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="나이"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rgGender" />
-
-    <EditText
-        android:id="@+id/etAge"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="3dp"
-        android:enabled="false"
-        android:hint="나이 입력"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvAge" />
-
-    <!-- 수정 버튼 -->
-
-    <!-- 저장 버튼 -->
-
+    <!-- 수정 버튼 (파란색) -->
     <Button
         android:id="@+id/btnEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         android:text="수정"
+        android:backgroundTint="@color/colorEdit"
+        app:layout_constraintTop_toBottomOf="@id/rgGender"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etAge" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- 저장 버튼 (빨간색) -->
     <Button
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="85dp"
-        android:enabled="false"
+        android:layout_marginTop="16dp"
         android:text="저장"
-        app:layout_constraintStart_toEndOf="@id/btnEdit"
-        app:layout_constraintTop_toTopOf="@id/btnEdit" />
+        android:backgroundTint="@color/colorSave"
+        android:enabled="false"
+        app:layout_constraintTop_toBottomOf="@id/btnEdit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- 로그아웃 버튼 (초록색) -->
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="로그아웃"
+        android:backgroundTint="@color/colorLogout"
+        app:layout_constraintTop_toBottomOf="@id/btnSave"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
