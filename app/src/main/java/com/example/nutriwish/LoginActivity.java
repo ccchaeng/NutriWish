@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //로그인 버튼 클릭시, 메인화면으로 이동
         login.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CalendarActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         });
 
