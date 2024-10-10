@@ -1,12 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/btn_immunity"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Category Fragment"
-        android:textSize="20sp"
-        android:layout_gravity="center" />
+        android:text="면역 강화" />
+
+    <Button
+        android:id="@+id/btn_fatigue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="피로 회복" />
+
+    <Button
+        android:id="@+id/btn_joint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="관절 건강" />
+
+    <Button
+        android:id="@+id/btn_digestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="소화 개선" />
+
+    <Button
+        android:id="@+id/btn_skin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="피부 &amp; 모발 건강" />
+
+    <Button
+        android:id="@+id/btn_brain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="두뇌 &amp; 집중력 강화" />
+
+    <Button
+        android:id="@+id/btn_eye"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="눈 건강" />
+
+    <Button
+        android:id="@+id/btn_heart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="심장 &amp; 혈관 건강" />
+
+    <Button
+        android:id="@+id/btn_diet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="다이어트 &amp; 체중 관리" />
+
+    <Button
+        android:id="@+id/btn_sleep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="숙면 &amp; 스트레스 완화" />
 </LinearLayout>
