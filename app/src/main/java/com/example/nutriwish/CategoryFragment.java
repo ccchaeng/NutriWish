@@ -1,101 +1,67 @@
 package com.example.nutriwish;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
 
 public class CategoryFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private CategoryAdapter categoryAdapter;
-    private ArrayList<String> categoryList;
-    private static final String TAG = "CategoryFragment";
+    public CategoryFragment() {
+        // Required empty public constructor
+    }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_category, container, false);
 
-        recyclerView = view.findViewById(R.id.recycler_view_category);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // 카테고리별 버튼 클릭 시 새로운 프래그먼트를 열도록 설정
+        Button btnImmunity = view.findViewById(R.id.btn_immunity);
+        Button btnFatigue = view.findViewById(R.id.btn_fatigue);
+        Button btnJoint = view.findViewById(R.id.btn_joint);
+        Button btnDigestion = view.findViewById(R.id.btn_digestion);
+        Button btnSkin = view.findViewById(R.id.btn_skin);
+        Button btnBrain = view.findViewById(R.id.btn_brain);
+        Button btnEye = view.findViewById(R.id.btn_eye);
+        Button btnHeart = view.findViewById(R.id.btn_heart);
+        Button btnDiet = view.findViewById(R.id.btn_diet);
+        Button btnSleep = view.findViewById(R.id.btn_sleep);
 
-        // 카테고리 리스트 초기화
-        categoryList = new ArrayList<>();
-        categoryList.add("1. 면역 강화");
-        categoryList.add("2. 피로 회복");
-        categoryList.add("3. 관절 건강");
-        categoryList.add("4. 소화 개선");
-        categoryList.add("5. 피부 & 모발 건강");
-        categoryList.add("6. 두뇌 & 집중력 강화");
-        categoryList.add("7. 눈 건강");
-        categoryList.add("8. 심장 & 혈관 건강");
-        categoryList.add("9. 다이어트 & 체중 관리");
-        categoryList.add("10. 숙면 & 스트레스 완화");
-
-        // 어댑터 설정 및 클릭 리스너 처리
-        categoryAdapter = new CategoryAdapter(categoryList);
-        categoryAdapter.setOnItemClickListener(new CategoryAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                // 디버깅을 위한 로그 추가
-                Log.d(TAG, "Item clicked at position: " + position);
-
-                // 선택한 카테고리에 맞는 Fragment로 전환
-                Fragment selectedFragment = null;
-
-                switch (position) {
-                    case 0:
-                        selectedFragment = new ImmunityFragment();
-                        break;
-                    case 1:
-                        selectedFragment = new FatigueRecoveryFragment();
-                        break;
-                    case 2:
-                        selectedFragment = new JointHealthFragment();
-                        break;
-                    case 3:
-                        selectedFragment = new DigestionImprovementFragment();
-                        break;
-                    case 4:
-                        selectedFragment = new SkinHairHealthFragment();
-                        break;
-                    case 5:
-                        selectedFragment = new BrainFocusFragment();
-                        break;
-                    case 6:
-                        selectedFragment = new EyeHealthFragment();
-                        break;
-                    case 7:
-                        selectedFragment = new HeartVascularHealthFragment();
-                        break;
-                    case 8:
-                        selectedFragment = new DietWeightManagementFragment();
-                        break;
-                    case 9:
-                        selectedFragment = new SleepStressFragment();
-                        break;
-                }
-
-                if (selectedFragment != null) {
-                    FragmentTransaction transaction = requireFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, selectedFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-            }
-        });
-
-        recyclerView.setAdapter(categoryAdapter);
+        // 각 버튼 클릭 시 새로운 프래그먼트로 이동하며 카테고리 정보를 전달
+        btnImmunity.setOnClickListener(v -> openCategoryDetailFragment("면역 강화"));
+        btnFatigue.setOnClickListener(v -> openCategoryDetailFragment("피로 회복"));
+        btnJoint.setOnClickListener(v -> openCategoryDetailFragment("관절 건강"));
+        btnDigestion.setOnClickListener(v -> openCategoryDetailFragment("소화 개선"));
+        btnSkin.setOnClickListener(v -> openCategoryDetailFragment("피부 & 모발 건강"));
+        btnBrain.setOnClickListener(v -> openCategoryDetailFragment("두뇌 & 집중력 강화"));
+        btnEye.setOnClickListener(v -> openCategoryDetailFragment("눈 건강"));
+        btnHeart.setOnClickListener(v -> openCategoryDetailFragment("심장 & 혈관 건강"));
+        btnDiet.setOnClickListener(v -> openCategoryDetailFragment("다이어트 & 체중 관리"));
+        btnSleep.setOnClickListener(v -> openCategoryDetailFragment("숙면 & 스트레스 완화"));
 
         return view;
+    }
+
+    // 새로운 프래그먼트를 열고, 선택된 카테고리 정보를 전달하는 메서드
+    private void openCategoryDetailFragment(String categoryName) {
+        CategoryDetailFragment detailFragment = new CategoryDetailFragment();
+
+        // 선택된 카테고리 정보를 Bundle을 통해 전달
+        Bundle bundle = new Bundle();
+        bundle.putString("category", categoryName);
+        detailFragment.setArguments(bundle);
+
+        // 새로운 프래그먼트로 교체
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, detailFragment);
+        transaction.addToBackStack(null);  // 뒤로 가기 버튼을 눌렀을 때 돌아갈 수 있도록
+        transaction.commit();
     }
 }
