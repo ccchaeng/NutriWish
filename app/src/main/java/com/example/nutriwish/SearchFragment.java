@@ -11,11 +11,12 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.example.nutriwish.SearchAdapter;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SearchFragment extends Fragment {
 
@@ -23,7 +24,8 @@ public class SearchFragment extends Fragment {
     private Button searchButton;
     private ListView resultListView;
 
-    // 영양제 연관 검색어 리스트
+    // 영양제 데이터를 보관
+    private Map<String, Supplement> supplementData;
     private List<String> suggestions;
     private SearchAdapter searchAdapter;
 
@@ -37,52 +39,35 @@ public class SearchFragment extends Fragment {
         searchButton = view.findViewById(R.id.searchButton);
         resultListView = view.findViewById(R.id.resultListView);
 
-        // 영양제 연관 검색어 리스트 초기화
-        suggestions = new ArrayList<>();
-        suggestions.add("Vitamin C");
-        suggestions.add("Omega-3");
-        suggestions.add("Calcium");
-        suggestions.add("Probiotics");
-        suggestions.add("Iron");
-        suggestions.add("Collagen");
-        suggestions.add("Vitamin D");
-        suggestions.add("Zinc");
-        suggestions.add("Magnesium");
-        suggestions.add("Multivitamin");
-        suggestions.add("Folic Acid");
-        suggestions.add("B-Complex");
-        suggestions.add("Vitamin B12");
-        suggestions.add("Glucosamine");
-        suggestions.add("CoQ10");
-        suggestions.add("Fish Oil");
-        suggestions.add("Lutein");
-        suggestions.add("Echinacea");
-        suggestions.add("Ginseng");
-        suggestions.add("Turmeric");
-        suggestions.add("Green Tea Extract");
-        suggestions.add("Probiotic Acidophilus");
-        suggestions.add("Amino Acids");
-        suggestions.add("Ashwagandha");
-        suggestions.add("Spirulina");
-        suggestions.add("Whey Protein");
-        suggestions.add("Biotin");
-        suggestions.add("Hyaluronic Acid");
-        suggestions.add("Milk Thistle");
+        // 영양제 데이터를 SupplementData에서 가져옴
+        supplementData = loadAllSupplements();
+        suggestions = new ArrayList<>(supplementData.keySet());
 
-        // 처음엔 빈 리스트로 어댑터 초기화 (리스트가 보이지 않도록)
-        searchAdapter = new SearchAdapter(getContext(), new ArrayList<>());
-        resultListView.setAdapter(searchAdapter);  // 어댑터를 ListView에 연결
+        // 어댑터 초기화 및 클릭 리스너 설정
+        searchAdapter = new SearchAdapter(getContext(), new ArrayList<>(), this::openSupplementDetail);
+        resultListView.setAdapter(searchAdapter);
 
         // 검색 버튼 클릭 이벤트 처리
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String query = searchInput.getText().toString();
-                filterSearchResults(query);  // 검색어에 맞는 결과 필터링
-            }
+        searchButton.setOnClickListener(v -> {
+            String query = searchInput.getText().toString();
+            filterSearchResults(query);  // 검색어에 맞는 결과 필터링
         });
 
         return view;
+    }
+
+    // 모든 카테고리의 영양제를 한 번에 불러오는 메서드
+    private Map<String, Supplement> loadAllSupplements() {
+        Map<String, Supplement> allSupplements = new HashMap<>();
+        Map<String, List<Supplement>> categorySupplements = SupplementData.getCategorySupplements();
+
+        for (List<Supplement> supplementList : categorySupplements.values()) {
+            for (Supplement supplement : supplementList) {
+                allSupplements.put(supplement.getName(), supplement);
+            }
+        }
+
+        return allSupplements;
     }
 
     // 검색어에 맞는 결과를 필터링하는 메서드
@@ -91,7 +76,6 @@ public class SearchFragment extends Fragment {
 
         if (!query.isEmpty()) {
             for (String suggestion : suggestions) {
-                // 검색어가 연관 검색어에 포함되어 있으면 결과 리스트에 추가
                 if (suggestion.toLowerCase().contains(query.toLowerCase())) {
                     filteredResults.add(suggestion);
                 }
@@ -99,6 +83,27 @@ public class SearchFragment extends Fragment {
         }
 
         // 어댑터의 데이터를 갱신 (필터링된 검색어 리스트로 갱신)
-        searchAdapter.updateData(filteredResults);
+        searchAdapter.clear();
+        searchAdapter.addAll(filteredResults);
+        searchAdapter.notifyDataSetChanged();
+    }
+
+    // 검색 결과 클릭 시 영양제 상세 정보를 표시하는 메서드
+    private void openSupplementDetail(String supplementName) {
+        Supplement supplement = supplementData.get(supplementName);
+        if (supplement != null) {
+            SupplementDetailFragment detailFragment = new SupplementDetailFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("name", supplement.getName());
+            bundle.putString("benefits", supplement.getBenefits());
+            bundle.putString("usage", supplement.getUsage());
+            bundle.putString("precautions", supplement.getPrecautions());
+            detailFragment.setArguments(bundle);
+
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, detailFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 }
