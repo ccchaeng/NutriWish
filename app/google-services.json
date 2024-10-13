@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "93893153707",
+    "project_id": "nutriwish-371d2",
+    "storage_bucket": "nutriwish-371d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93893153707:android:93648a5fce8da91ecf38ee",
+        "android_client_info": {
+          "package_name": "com.example.nutriwish"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkKO_Kvb-xlppKN9b6ultvsO3b2tV-OA8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
