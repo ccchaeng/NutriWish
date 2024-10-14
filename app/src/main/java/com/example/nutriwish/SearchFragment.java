@@ -94,10 +94,15 @@ public class SearchFragment extends Fragment {
         if (supplement != null) {
             SupplementDetailFragment detailFragment = new SupplementDetailFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("name", supplement.getName());
-            bundle.putString("benefits", supplement.getBenefits());
-            bundle.putString("usage", supplement.getUsage());
-            bundle.putString("precautions", supplement.getPrecautions());
+
+            // 선택한 영양제 정보를 번들에 저장
+            List<Supplement> supplements = new ArrayList<>();
+            supplements.add(supplement);
+            bundle.putSerializable("supplements", (ArrayList<Supplement>) supplements);
+            bundle.putInt("index", 0);  // 현재는 검색에서 하나의 영양제만 선택하므로 index는 0
+            bundle.putInt("minIndex", 0);
+            bundle.putInt("maxIndex", 0);
+
             detailFragment.setArguments(bundle);
 
             FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
