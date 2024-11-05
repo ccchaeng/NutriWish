@@ -49,7 +49,6 @@ public class UserFragment extends Fragment {
         etName = view.findViewById(R.id.etName);
         etBirthDate = view.findViewById(R.id.etBirthDate);
         etId = view.findViewById(R.id.etId);
-        etPassword = view.findViewById(R.id.etPassword);
 
         // 성별 선택을 위한 RadioGroup과 RadioButton 초기화
         rgGender = view.findViewById(R.id.rgGender);
@@ -105,7 +104,7 @@ public class UserFragment extends Fragment {
                         etBirthDate.setText(documentSnapshot.getString("birthdate"));
                         etId.setText(documentSnapshot.getString("email"));
 
-                        // Firestore에서 불러온 성별에 따라 라디오 버튼과 프로필 이미지 설정
+                        // Firestore에서 불러온 성별에 따라 라디오 버튼 및 프로필 이미지 설정
                         String gender = documentSnapshot.getString("gender");
                         if ("남자".equals(gender)) {
                             rbMale.setChecked(true);
@@ -126,7 +125,7 @@ public class UserFragment extends Fragment {
         String name = etName.getText().toString().trim();
         String birthDate = etBirthDate.getText().toString().trim();
 
-        // Firestore에 업데이트할 데이터
+        // Firestore에 업데이트할 데이터 구성
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("name", name);
         userInfo.put("birthdate", birthDate);
