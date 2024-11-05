@@ -27,23 +27,23 @@
         android:paddingRight="20dp">
 
         <EditText
-            android:id="@+id/et_id"
+            android:id="@+id/loginEmail"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:background="#FFFFFF"
-            android:hint="아이디를 입력하세요..."
+            android:hint="이메일"
             android:inputType="textCapWords"
             android:padding="10dp"
             android:textColor="@color/black"
             android:textColorHint="#D3D3D3" />
         <EditText
-            android:id="@+id/et_pass"
+            android:id="@+id/loginPassword"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:background="@color/white"
-            android:hint="비밀번호를 입력하세요..."
+            android:hint="비밀번호"
             android:inputType="textPassword"
             android:padding="10dp"
             android:textColor="@color/black"
