@@ -10,8 +10,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserFragment extends Fragment {
 
@@ -20,11 +28,19 @@ public class UserFragment extends Fragment {
     private RadioButton rbMale, rbFemale;
     private Button btnEdit, btnSave, btnLogout;
     private ImageView profileImage;
+    private String selectedGender;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user, container, false);
+
+        //파이어베이스
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         // 프로필 이미지 초기화
         profileImage = view.findViewById(R.id.profileImage);
@@ -45,82 +61,91 @@ public class UserFragment extends Fragment {
         btnSave = view.findViewById(R.id.btnSave);
         btnLogout = view.findViewById(R.id.btnLogout);
 
-        // 성별 선택 리스너 추가
-        rgGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.rbMale) {
-                    // 남자 선택 시 프로필 이미지를 변경
-                    profileImage.setImageResource(R.drawable.male_profile);  // 남자 이미지 파일
-                } else if (checkedId == R.id.rbFemale) {
-                    // 여자 선택 시 프로필 이미지를 변경
-                    profileImage.setImageResource(R.drawable.female_profile);  // 여자 이미지 파일
-                }
+        // 성별에 따라 프로필 이미지 변경
+        rgGender.setOnCheckedChangeListener((group, checkedID) -> {
+            // 남자일 경우
+            if (checkedID == R.id.rbMale) {
+                selectedGender = "남자";
+                profileImage.setImageResource(R.drawable.male_profile);
+            } else if (checkedID == R.id.rbFemale) {
+                selectedGender = "여자";
+                profileImage.setImageResource(R.drawable.female_profile);
             }
         });
 
-        // 초기에는 필드와 저장 버튼 비활성화
-        enableEditTexts(false);
-        btnSave.setVisibility(View.GONE);
-        btnSave.setEnabled(false);
+        // 사용자 정보 로드
+        loadUserInfo();
 
-        // 수정 버튼 클릭 시 필드 활성화 및 저장 버튼 표시
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                enableEditTexts(true);
-                btnSave.setVisibility(View.VISIBLE);
-                btnSave.setEnabled(true);
-                btnEdit.setVisibility(View.GONE);
-            }
+        // 수정 버튼 클릭 시 필드 수정 가능하도록 함
+        btnEdit.setOnClickListener(v -> {
+            enableEditing(true);
+            btnSave.setEnabled(true);
+            btnEdit.setEnabled(false);
         });
 
-        // 저장 버튼 클릭 시 데이터 저장 및 필드 비활성화
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveUserData();
-                enableEditTexts(false);
-                btnSave.setVisibility(View.GONE);
-                btnSave.setEnabled(false);
-                btnEdit.setVisibility(View.VISIBLE);
-            }
-        });
+        // 저장 버튼 클릭 시 Firestore에 업데이트
+        btnSave.setOnClickListener(v -> saveUserInfo());
 
-        // 로그아웃 버튼 클릭 시 로그인 화면으로 이동
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }
+        // 로그아웃 버튼 클릭 시 파이어베이스 로그아웃 처리
+        btnLogout.setOnClickListener(v -> {
+            mAuth.signOut();
+            // 로그아웃 후 로그인 화면으로 이동
+            Toast.makeText(getContext(), "로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
         });
 
         return view;
     }
 
-    private void enableEditTexts(boolean enable) {
-        etName.setEnabled(enable);
-        etBirthDate.setEnabled(enable);
-        etId.setEnabled(enable);
-        etPassword.setEnabled(enable);
-        for (int i = 0; i < rgGender.getChildCount(); i++) {
-            rgGender.getChildAt(i).setEnabled(enable);
-        }
+    private void loadUserInfo() {
+        String userId = mAuth.getCurrentUser().getUid();
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        etName.setText(documentSnapshot.getString("name"));
+                        etBirthDate.setText(documentSnapshot.getString("birthdate"));
+                        etId.setText(documentSnapshot.getString("email"));
+
+                        // Firestore에서 불러온 성별에 따라 라디오 버튼과 프로필 이미지 설정
+                        String gender = documentSnapshot.getString("gender");
+                        if ("남자".equals(gender)) {
+                            rbMale.setChecked(true);
+                            profileImage.setImageResource(R.drawable.male_profile);
+                            selectedGender = "남자";
+                        } else if ("여자".equals(gender)) {
+                            rbFemale.setChecked(true);
+                            profileImage.setImageResource(R.drawable.female_profile);
+                            selectedGender = "여자";
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "사용자 정보를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show());
     }
 
-    private void saveUserData() {
-        String name = etName.getText().toString();
-        String birthDate = etBirthDate.getText().toString();
-        String id = etId.getText().toString();
-        String password = etPassword.getText().toString();
-        String gender = rbMale.isChecked() ? "남" : "여";
+    private void saveUserInfo() {
+        String userId = mAuth.getCurrentUser().getUid();
+        String name = etName.getText().toString().trim();
+        String birthDate = etBirthDate.getText().toString().trim();
 
-        System.out.println("이름: " + name);
-        System.out.println("생년월일: " + birthDate);
-        System.out.println("아이디: " + id);
-        System.out.println("비밀번호: " + password);
-        System.out.println("성별: " + gender);
+        // Firestore에 업데이트할 데이터
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("name", name);
+        userInfo.put("birthdate", birthDate);
+        userInfo.put("gender", selectedGender);
+
+        db.collection("users").document(userId).update(userInfo)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "사용자 정보가 업데이트되었습니다.", Toast.LENGTH_SHORT).show();
+                    enableEditing(false);
+                    btnSave.setEnabled(false);
+                    btnEdit.setEnabled(true);
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "정보 업데이트에 실패했습니다.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void enableEditing(boolean enabled) {
+        etName.setEnabled(enabled);
+        etBirthDate.setEnabled(enabled);
+        rbMale.setEnabled(enabled);
+        rbFemale.setEnabled(enabled);
     }
 }
