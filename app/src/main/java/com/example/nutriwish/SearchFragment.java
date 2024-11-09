@@ -21,10 +21,9 @@ import java.util.Map;
 public class SearchFragment extends Fragment {
 
     private EditText searchInput;
-    private Button searchButton;
+    private Button searchButton, favoritesButton;
     private ListView resultListView;
 
-    // 영양제 데이터를 보관
     private Map<String, Supplement> supplementData;
     private List<String> suggestions;
     private SearchAdapter searchAdapter;
@@ -34,29 +33,28 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        // View 요소 초기화
         searchInput = view.findViewById(R.id.searchInput);
         searchButton = view.findViewById(R.id.searchButton);
+        favoritesButton = view.findViewById(R.id.favoritesButton);
         resultListView = view.findViewById(R.id.resultListView);
 
-        // 영양제 데이터를 SupplementData에서 가져옴
         supplementData = loadAllSupplements();
         suggestions = new ArrayList<>(supplementData.keySet());
 
-        // 어댑터 초기화 및 클릭 리스너 설정
-        searchAdapter = new SearchAdapter(getContext(), new ArrayList<>(), this::openSupplementDetail);
+        // Initialize SearchAdapter with favorite toggle functionality
+        searchAdapter = new SearchAdapter(getContext(), new ArrayList<>(), this::openSupplementDetail, this::toggleFavorite);
         resultListView.setAdapter(searchAdapter);
 
-        // 검색 버튼 클릭 이벤트 처리
         searchButton.setOnClickListener(v -> {
             String query = searchInput.getText().toString();
-            filterSearchResults(query);  // 검색어에 맞는 결과 필터링
+            filterSearchResults(query);
         });
+
+        favoritesButton.setOnClickListener(v -> showFavorites());
 
         return view;
     }
 
-    // 모든 카테고리의 영양제를 한 번에 불러오는 메서드
     private Map<String, Supplement> loadAllSupplements() {
         Map<String, Supplement> allSupplements = new HashMap<>();
         Map<String, List<Supplement>> categorySupplements = SupplementData.getCategorySupplements();
@@ -70,10 +68,8 @@ public class SearchFragment extends Fragment {
         return allSupplements;
     }
 
-    // 검색어에 맞는 결과를 필터링하는 메서드
     private void filterSearchResults(String query) {
         List<String> filteredResults = new ArrayList<>();
-
         if (!query.isEmpty()) {
             for (String suggestion : suggestions) {
                 if (suggestion.toLowerCase().contains(query.toLowerCase())) {
@@ -81,25 +77,41 @@ public class SearchFragment extends Fragment {
                 }
             }
         }
-
-        // 어댑터의 데이터를 갱신 (필터링된 검색어 리스트로 갱신)
         searchAdapter.clear();
         searchAdapter.addAll(filteredResults);
         searchAdapter.notifyDataSetChanged();
     }
 
-    // 검색 결과 클릭 시 영양제 상세 정보를 표시하는 메서드
+    private void toggleFavorite(String supplementName) {
+        Supplement supplement = supplementData.get(supplementName);
+        if (supplement != null) {
+            supplement.setFavorite(!supplement.isFavorite());  // Toggle favorite status
+        }
+    }
+
+    private void showFavorites() {
+        List<String> favoriteResults = new ArrayList<>();
+        for (String suggestion : suggestions) {
+            Supplement supplement = supplementData.get(suggestion);
+            if (supplement != null && supplement.isFavorite()) {
+                favoriteResults.add(suggestion);
+            }
+        }
+        searchAdapter.clear();
+        searchAdapter.addAll(favoriteResults);
+        searchAdapter.notifyDataSetChanged();
+    }
+
     private void openSupplementDetail(String supplementName) {
         Supplement supplement = supplementData.get(supplementName);
         if (supplement != null) {
             SupplementDetailFragment detailFragment = new SupplementDetailFragment();
             Bundle bundle = new Bundle();
 
-            // 선택한 영양제 정보를 번들에 저장
             List<Supplement> supplements = new ArrayList<>();
             supplements.add(supplement);
             bundle.putSerializable("supplements", (ArrayList<Supplement>) supplements);
-            bundle.putInt("index", 0);  // 현재는 검색에서 하나의 영양제만 선택하므로 index는 0
+            bundle.putInt("index", 0);
             bundle.putInt("minIndex", 0);
             bundle.putInt("maxIndex", 0);
 
