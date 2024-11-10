@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -12,19 +13,29 @@ import java.util.List;
 public class SearchAdapter extends ArrayAdapter<String> {
 
     private final OnItemClickListener onItemClickListener;
+    private final OnFavoriteClickListener onFavoriteClickListener;
 
-    // ViewHolder 패턴을 사용하기 위한 클래스
+    // ViewHolder pattern to optimize list item performance
     private static class ViewHolder {
         TextView textView;
+        ImageButton favoriteButton;
     }
 
+    // Listener interface for item clicks
     public interface OnItemClickListener {
         void onItemClick(String supplementName);
     }
 
-    public SearchAdapter(Context context, List<String> suggestions, OnItemClickListener listener) {
+    // Listener interface for favorite button clicks
+    public interface OnFavoriteClickListener {
+        void onFavoriteClick(String supplementName);
+    }
+
+    // Adapter constructor
+    public SearchAdapter(Context context, List<String> suggestions, OnItemClickListener itemListener, OnFavoriteClickListener favoriteListener) {
         super(context, 0, suggestions);
-        this.onItemClickListener = listener;
+        this.onItemClickListener = itemListener;
+        this.onFavoriteClickListener = favoriteListener;
     }
 
     @Override
@@ -32,23 +43,30 @@ public class SearchAdapter extends ArrayAdapter<String> {
         ViewHolder viewHolder;
 
         if (convertView == null) {
-            // convertView가 null이면 새로 생성하고 ViewHolder를 연결
-            convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            // Inflate the item layout and initialize the ViewHolder
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_supplement, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.textView = convertView.findViewById(android.R.id.text1);
+            viewHolder.textView = convertView.findViewById(R.id.text1);  // Update to match actual ID
+            viewHolder.favoriteButton = convertView.findViewById(R.id.favoriteButton);
             convertView.setTag(viewHolder);
         } else {
-            // convertView가 재사용되는 경우 ViewHolder를 가져옴
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        String suggestion = getItem(position);
-        viewHolder.textView.setText(suggestion);
+        String supplementName = getItem(position);
+        viewHolder.textView.setText(supplementName);
 
-        // 클릭 이벤트 처리 (null 체크를 간결하게)
+        // Set up click listener for the entire item
         convertView.setOnClickListener(v -> {
-            if (suggestion != null) {
-                onItemClickListener.onItemClick(suggestion);
+            if (supplementName != null) {
+                onItemClickListener.onItemClick(supplementName);
+            }
+        });
+
+        // Set up click listener for the favorite button
+        viewHolder.favoriteButton.setOnClickListener(v -> {
+            if (supplementName != null) {
+                onFavoriteClickListener.onFavoriteClick(supplementName);
             }
         });
 
