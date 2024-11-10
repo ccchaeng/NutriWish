@@ -33,18 +33,24 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
+        // Initialize UI elements
         searchInput = view.findViewById(R.id.searchInput);
         searchButton = view.findViewById(R.id.searchButton);
         favoritesButton = view.findViewById(R.id.favoritesButton);
         resultListView = view.findViewById(R.id.resultListView);
 
+        // Load supplement data and prepare suggestions
         supplementData = loadAllSupplements();
         suggestions = new ArrayList<>(supplementData.keySet());
 
-        // Initialize SearchAdapter with favorite toggle functionality
-        searchAdapter = new SearchAdapter(getContext(), new ArrayList<>(), this::openSupplementDetail, this::toggleFavorite);
+        // Initialize SearchAdapter with item click and favorite toggle functionality
+        searchAdapter = new SearchAdapter(getContext(), new ArrayList<>(),
+                supplementName -> openSupplementDetail(supplementName),
+                supplementName -> toggleFavorite(supplementName)
+        );
         resultListView.setAdapter(searchAdapter);
 
+        // Set click listeners for search and favorites buttons
         searchButton.setOnClickListener(v -> {
             String query = searchInput.getText().toString();
             filterSearchResults(query);
@@ -55,6 +61,7 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
+    // Method to load all supplements from SupplementData class
     private Map<String, Supplement> loadAllSupplements() {
         Map<String, Supplement> allSupplements = new HashMap<>();
         Map<String, List<Supplement>> categorySupplements = SupplementData.getCategorySupplements();
@@ -68,6 +75,7 @@ public class SearchFragment extends Fragment {
         return allSupplements;
     }
 
+    // Method to filter search results based on query
     private void filterSearchResults(String query) {
         List<String> filteredResults = new ArrayList<>();
         if (!query.isEmpty()) {
@@ -82,6 +90,7 @@ public class SearchFragment extends Fragment {
         searchAdapter.notifyDataSetChanged();
     }
 
+    // Toggle the favorite status of a supplement
     private void toggleFavorite(String supplementName) {
         Supplement supplement = supplementData.get(supplementName);
         if (supplement != null) {
@@ -89,6 +98,7 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    // Show only favorite supplements
     private void showFavorites() {
         List<String> favoriteResults = new ArrayList<>();
         for (String suggestion : suggestions) {
@@ -102,6 +112,7 @@ public class SearchFragment extends Fragment {
         searchAdapter.notifyDataSetChanged();
     }
 
+    // Open supplement detail fragment when a supplement is clicked
     private void openSupplementDetail(String supplementName) {
         Supplement supplement = supplementData.get(supplementName);
         if (supplement != null) {
@@ -111,7 +122,7 @@ public class SearchFragment extends Fragment {
             List<Supplement> supplements = new ArrayList<>();
             supplements.add(supplement);
             bundle.putSerializable("supplements", (ArrayList<Supplement>) supplements);
-            bundle.putInt("index", 0);
+            bundle.putInt("index", 0);  // Only one item selected, so index is 0
             bundle.putInt("minIndex", 0);
             bundle.putInt("maxIndex", 0);
 
