@@ -5,13 +5,14 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- 검색어 입력과 버튼을 한 줄에 배치 -->
+    <!-- Row for search input and button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <!-- 검색어 입력 -->
+        <!-- Search input field -->
         <EditText
             android:id="@+id/searchInput"
             android:layout_width="0dp"
@@ -19,22 +20,39 @@
             android:layout_weight="1"
             android:hint="검색어를 입력하세요"
             android:padding="10dp"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:background="@android:drawable/edit_text"
+            android:inputType="text" />
 
-        <!-- 검색 버튼 -->
+        <!-- Search button -->
         <Button
             android:id="@+id/searchButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="검색" />
+            android:layout_height="match_parent"
+            android:text="검색"
+            android:textSize="16sp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
 
-    <!-- 검색 결과를 보여줄 ListView -->
+    <!-- Favorites button -->
+    <Button
+        android:id="@+id/favoritesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="즐겨찾기 보기"
+        android:layout_marginTop="8dp"
+        android:padding="10dp"
+        android:textSize="16sp" />
+
+    <!-- ListView to display search results -->
     <ListView
         android:id="@+id/resultListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        android:textSize="18sp" />
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="10dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
 </LinearLayout>
