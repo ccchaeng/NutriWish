@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -90,6 +91,7 @@ public class CalendarFragment extends Fragment {
                 tasks.clear();
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     CalendarTaskItem taskItem = document.toObject(CalendarTaskItem.class);
+                    taskItem.setId(document.getId());
                     tasks.add(taskItem);
                 }
                 taskListAdapter.notifyDataSetChanged();
@@ -106,6 +108,7 @@ public class CalendarFragment extends Fragment {
                 tasks.clear();
                 for (DocumentSnapshot document : task.getResult()) {
                     CalendarTaskItem taskItem = document.toObject(CalendarTaskItem.class);
+                    taskItem.setId(document.getId());
                     tasks.add(taskItem);
                 }
                 taskListAdapter.notifyDataSetChanged();
@@ -135,8 +138,9 @@ public class CalendarFragment extends Fragment {
             String taskMemo = taskMemoInput.getText().toString();
 
             if (!taskName.isEmpty() && !selectedTime.isEmpty()) {
-                CalendarTaskItem newTask = new CalendarTaskItem(taskName, selectedDate, selectedTime, taskMemo);
-                db.collection("calendar").add(newTask).addOnSuccessListener(documentReference -> {
+                DocumentReference newDocRef = db.collection("calendar").document();
+                CalendarTaskItem newTask = new CalendarTaskItem(newDocRef.getId(), taskName, selectedDate, selectedTime, taskMemo);
+                newDocRef.set(newTask).addOnSuccessListener(documentReference -> {
                     tasks.add(newTask);
                     taskListAdapter.notifyDataSetChanged();
                     Toast.makeText(getContext(), "일정이 저장되었습니다.", Toast.LENGTH_SHORT).show();
@@ -166,8 +170,8 @@ public class CalendarFragment extends Fragment {
         Button setTimeButton = dialogView.findViewById(R.id.set_time_button);
 
         taskNameInput.setText(taskItem.getTaskName());
-        taskTimeDisplay.setText(taskItem.getTaskTime());
-        taskMemoInput.setText(taskItem.getTaskMemo());
+        taskTimeDisplay.setText(taskItem.getTime());
+        taskMemoInput.setText(taskItem.getMemo());
 
         // 수정 모드 전환 버튼 추가
         builder.setNeutralButton("수정", null);
@@ -192,8 +196,8 @@ public class CalendarFragment extends Fragment {
 
                 if (!updatedTaskName.isEmpty() && !updatedTaskTime.isEmpty()) {
                     taskItem.setTaskName(updatedTaskName);
-                    taskItem.setTaskTime(updatedTaskTime);
-                    taskItem.setTaskMemo(updatedTaskMemo);
+                    taskItem.setTime(updatedTaskTime);
+                    taskItem.setMemo(updatedTaskMemo);
                     db.collection("calendar").document(taskItem.getId()).set(taskItem)
                             .addOnSuccessListener(aVoid -> {
                                 taskListAdapter.notifyDataSetChanged();
