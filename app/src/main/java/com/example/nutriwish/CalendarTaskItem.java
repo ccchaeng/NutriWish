@@ -3,22 +3,27 @@ package com.example.nutriwish;
 public class CalendarTaskItem {
     private String id;
     private String taskName;
-    private String taskDate;
-    private String taskTime;
-    private String taskMemo;
+    private String date;
+    private String time;
+    private String memo;
 
     public CalendarTaskItem() {}
 
-    public CalendarTaskItem(String taskName, String taskDate, String taskTime, String taskMemo) {
+    public CalendarTaskItem(String id, String taskName, String selectedDate, String selectedTime, String taskMemo) {
         this.taskName = taskName;
-        this.taskDate = taskDate;
-        this.taskTime = taskTime;
-        this.taskMemo = taskMemo;
+        this.date = selectedDate;
+        this.time = selectedTime;
+        this.memo = taskMemo;
     }
 
-    public String getId() { return id; }
+    // Getter 및 Setter 메서드
+    public String getId() {
+        return id;
+    }
 
-    public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getTaskName() {
         return taskName;
@@ -28,21 +33,27 @@ public class CalendarTaskItem {
         this.taskName = taskName;
     }
 
-    public String getTaskDate() { return taskDate; }
-
-    public void setTaskDate(String taskDate) { this.taskDate = taskDate; }
-
-    public String getTaskTime() { return taskTime; }
-
-    public void setTaskTime(String taskTime) {
-        this.taskTime = taskTime;
+    public String getDate() {
+        return date;
     }
 
-    public String getTaskMemo() {
-        return taskMemo;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public void setTaskMemo(String taskMemo) {
-        this.taskMemo = taskMemo;
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }
