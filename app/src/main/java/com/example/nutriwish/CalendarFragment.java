@@ -18,8 +18,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CalendarFragment extends Fragment {
@@ -29,57 +32,88 @@ public class CalendarFragment extends Fragment {
     private RecyclerView taskList;
     private CalendarTaskListAdapter taskListAdapter;
     private List<CalendarTaskItem> tasks;
-    private HashMap<String, CalendarTaskItem> taskMap = new HashMap<>();  // 날짜에 따른 일정 저장
+    private FirebaseFirestore db;
     private String selectedTime = "";  // 선택된 시간 저장
+    private String currentSelectedDate = "";  // 현재 선택된 날짜 저장
 
     public CalendarFragment() {
         // Required empty public constructor
     }
 
-    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
+        db = FirebaseFirestore.getInstance();
         calendarView = view.findViewById(R.id.calendarView);
         addTaskButton = view.findViewById(R.id.add_task_button);
         taskList = view.findViewById(R.id.task_list);
         tasks = new ArrayList<>();
-
-        taskListAdapter = new CalendarTaskListAdapter(tasks, new CalendarTaskListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(CalendarTaskItem taskItem) {
-                // 사용자가 저장된 일정을 클릭하면 세부 정보 다이얼로그를 띄움
-                showTaskDetailsDialog(taskItem);
-            }
-        });
+        taskListAdapter = new CalendarTaskListAdapter(tasks, this::showTaskDetailsDialog);
 
         taskList.setLayoutManager(new LinearLayoutManager(getContext()));
         taskList.setAdapter(taskListAdapter);
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                String selectedDate = year + "/" + (month + 1) + "/" + dayOfMonth;
+        // 앱 시작 시 Firestore에서 일정 불러오기
+        loadTasksFromFirestore();
 
-                if (taskMap.containsKey(selectedDate)) {
-                    CalendarTaskItem task = taskMap.get(selectedDate);
-                    tasks.clear();
-                    tasks.add(task);
-                    taskListAdapter.notifyDataSetChanged();
-                } else {
-                    tasks.clear();
-                    taskListAdapter.notifyDataSetChanged();
-                    addTaskButton.setVisibility(View.VISIBLE);
-                }
+        calendarView.setOnDateChangeListener((view1, year, month, dayOfMonth) -> {
+            currentSelectedDate = year + "/" + (month + 1) + "/" + dayOfMonth;
+            loadTasksForDate(currentSelectedDate);  // 특정 날짜 클릭 시 해당 날짜의 일정 불러오기
+            addTaskButton.setVisibility(View.VISIBLE);
+        });
 
-                addTaskButton.setOnClickListener(v -> {
-                    showAddTaskDialog(selectedDate);
-                });
+        addTaskButton.setOnClickListener(v -> {
+            if (!currentSelectedDate.isEmpty()) {
+                showAddTaskDialog(currentSelectedDate);
+            } else {
+                Toast.makeText(getContext(), "날짜를 선택하세요.", Toast.LENGTH_SHORT).show();
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!currentSelectedDate.isEmpty()) {
+            loadTasksForDate(currentSelectedDate);  // 화면에 다시 돌아왔을 때 현재 선택된 날짜의 일정 데이터를 불러오기
+        } else {
+            loadTasksFromFirestore();
+        }
+    }
+
+    private void loadTasksFromFirestore() {
+        db.collection("calendar").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                tasks.clear();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    CalendarTaskItem taskItem = document.toObject(CalendarTaskItem.class);
+                    tasks.add(taskItem);
+                }
+                taskListAdapter.notifyDataSetChanged();
+                addTaskButton.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(getContext(), "일정을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void loadTasksForDate(String date) {
+        db.collection("calendar").whereEqualTo("date", date).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                tasks.clear();
+                for (DocumentSnapshot document : task.getResult()) {
+                    CalendarTaskItem taskItem = document.toObject(CalendarTaskItem.class);
+                    tasks.add(taskItem);
+                }
+                taskListAdapter.notifyDataSetChanged();
+                addTaskButton.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(getContext(), "해당 날짜의 일정을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // 일정 추가 다이얼로그를 표시하는 메서드
@@ -94,21 +128,21 @@ public class CalendarFragment extends Fragment {
         EditText taskMemoInput = dialogView.findViewById(R.id.task_memo_input);
         Button setTimeButton = dialogView.findViewById(R.id.set_time_button);
 
-        setTimeButton.setOnClickListener(v -> {
-            showTimePicker(taskTimeDisplay);
-        });
+        setTimeButton.setOnClickListener(v -> showTimePicker(taskTimeDisplay));
 
         builder.setPositiveButton("저장", (dialog, which) -> {
             String taskName = taskNameInput.getText().toString();
             String taskMemo = taskMemoInput.getText().toString();
 
             if (!taskName.isEmpty() && !selectedTime.isEmpty()) {
-                CalendarTaskItem newTask = new CalendarTaskItem(taskName, selectedTime, taskMemo);
-                taskMap.put(selectedDate, newTask);
-                tasks.clear();
-                tasks.add(newTask);
-                taskListAdapter.notifyDataSetChanged();
-                addTaskButton.setVisibility(View.GONE);
+                CalendarTaskItem newTask = new CalendarTaskItem(taskName, selectedDate, selectedTime, taskMemo);
+                db.collection("calendar").add(newTask).addOnSuccessListener(documentReference -> {
+                    tasks.add(newTask);
+                    taskListAdapter.notifyDataSetChanged();
+                    Toast.makeText(getContext(), "일정이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "일정 저장 실패", Toast.LENGTH_SHORT).show();
+                });
             } else {
                 Toast.makeText(getContext(), "영양제 이름과 시간을 입력하세요.", Toast.LENGTH_SHORT).show();
             }
@@ -120,7 +154,6 @@ public class CalendarFragment extends Fragment {
         dialog.show();
     }
 
-    // 저장된 일정 클릭 시 다이얼로그를 표시하고 수정할 수 있는 메서드
     private void showTaskDetailsDialog(CalendarTaskItem taskItem) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
@@ -132,68 +165,51 @@ public class CalendarFragment extends Fragment {
         EditText taskMemoInput = dialogView.findViewById(R.id.task_memo_input);
         Button setTimeButton = dialogView.findViewById(R.id.set_time_button);
 
-        // 기존 데이터를 다이얼로그에 표시
-        taskNameInput.setText(taskItem.getTaskName());  // 영양제 이름 표시
-        taskTimeDisplay.setText(taskItem.getTaskTime());  // 기존 시간 표시
-        taskMemoInput.setText(taskItem.getTaskMemo());  // 기존 메모 표시
+        taskNameInput.setText(taskItem.getTaskName());
+        taskTimeDisplay.setText(taskItem.getTaskTime());
+        taskMemoInput.setText(taskItem.getTaskMemo());
 
-        // 시간 설정을 초기화 (수정 가능하게 하기 위해)
-        selectedTime = taskItem.getTaskTime();  // 기존 시간 저장
+        // 수정 모드 전환 버튼 추가
+        builder.setNeutralButton("수정", null);
 
-        // 초기에는 수정 불가능하게 설정
-        taskNameInput.setEnabled(false);
-        taskMemoInput.setEnabled(false);
-        setTimeButton.setEnabled(false);
-        taskTimeDisplay.setVisibility(View.VISIBLE);  // 시간을 항상 표시하도록 설정
+        builder.setPositiveButton("확인", (dialog, which) -> dialog.dismiss());
 
-        // 다이얼로그를 닫지 않고 수정 모드로 전환할 수 있는 버튼 추가
-        builder.setNeutralButton("수정", null);  // '수정' 버튼을 다이얼로그가 닫히지 않게 설정
-
-        builder.setPositiveButton("확인", (dialog, which) -> {
-            dialog.dismiss();  // 읽기 모드에서 확인만 가능
-        });
-
-        builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
-
-        // 다이얼로그 생성 후 수정 버튼 동작 처리
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        // 수정 버튼 클릭 시 동작 처리
+        // 수정 버튼 클릭 시 동작 설정
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-            // 수정 모드로 전환 (입력 필드 활성화)
             taskNameInput.setEnabled(true);
             taskMemoInput.setEnabled(true);
             setTimeButton.setEnabled(true);
+            setTimeButton.setOnClickListener(view -> showTimePicker(taskTimeDisplay));
 
-            // 시간 설정 버튼을 클릭했을 때 TimePickerDialog를 다시 표시하도록 설정
-            setTimeButton.setOnClickListener(v1 -> {
-                showTimePicker(taskTimeDisplay);  // TimePickerDialog 열기
-            });
-
-            // 수정 완료 후 저장 버튼 처리
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText("저장");  // 확인 버튼을 저장 버튼으로 변경
-
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText("저장");
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v1 -> {
                 String updatedTaskName = taskNameInput.getText().toString();
                 String updatedTaskMemo = taskMemoInput.getText().toString();
-                String updatedTaskTime = taskTimeDisplay.getText().toString();  // 수정된 시간
+                String updatedTaskTime = taskTimeDisplay.getText().toString();
 
                 if (!updatedTaskName.isEmpty() && !updatedTaskTime.isEmpty()) {
-                    // 데이터를 업데이트
                     taskItem.setTaskName(updatedTaskName);
                     taskItem.setTaskTime(updatedTaskTime);
                     taskItem.setTaskMemo(updatedTaskMemo);
-
-                    taskListAdapter.notifyDataSetChanged();  // 리스트를 갱신
-                    dialog.dismiss();  // 다이얼로그 닫기
-                    Toast.makeText(getContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                    db.collection("calendar").document(taskItem.getId()).set(taskItem)
+                            .addOnSuccessListener(aVoid -> {
+                                taskListAdapter.notifyDataSetChanged();
+                                dialog.dismiss();
+                                Toast.makeText(getContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(getContext(), "일정 수정 실패", Toast.LENGTH_SHORT).show());
                 } else {
+                    // 이름이나 시간이 비어 있을 경우의 경고 메시지
                     Toast.makeText(getContext(), "영양제 이름과 시간을 입력하세요.", Toast.LENGTH_SHORT).show();
                 }
             });
         });
     }
+
+
 
     // 타임 피커 다이얼로그를 표시하는 메서드
     private void showTimePicker(TextView taskTimeDisplay) {
@@ -201,8 +217,9 @@ public class CalendarFragment extends Fragment {
                 (view, hourOfDay, minute) -> {
                     selectedTime = String.format("%02d:%02d", hourOfDay, minute);  // 선택한 시간 저장
                     taskTimeDisplay.setText(selectedTime);  // 선택한 시간을 표시
-                    taskTimeDisplay.setVisibility(View.VISIBLE);  // 시간을 항상 보이도록 설정
                 }, 0, 0, true);  // 기본 값은 00:00으로 설정 (24시간 형식)
         timePickerDialog.show();
     }
+
+
 }
