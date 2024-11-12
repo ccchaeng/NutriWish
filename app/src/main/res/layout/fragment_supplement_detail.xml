@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="8dp">
 
         <ImageView
             android:id="@+id/supplement_image"
@@ -40,6 +40,15 @@
             android:textSize="24sp"
             android:textStyle="bold" />
     </LinearLayout>
+
+    <!-- 즐겨찾기 토글 버튼 -->
+    <ToggleButton
+        android:id="@+id/favorite_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOn="즐겨찾기 해제"
+        android:textOff="즐겨찾기 추가"
+        android:layout_marginBottom="16dp" />
 
     <!-- 영양제 효능, 복용법, 주의사항 버튼을 가로로 배치 -->
     <LinearLayout
