@@ -12,8 +12,15 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 public class NotificationHelper {
-    private static final String CHANNEL_ID = "nutriwish_channel";
+    private static final String CHANNEL_ID = "nutriwish_channel"; // 알림 채널 ID
+    private Context mContext;
 
+    // Context를 매개변수로 받는 생성자 추가
+    public NotificationHelper(Context context) {
+        this.mContext = context;
+    }
+
+    // 알림 채널 생성
     public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Nutriwish 알림 채널";
@@ -29,23 +36,21 @@ public class NotificationHelper {
         }
     }
 
-    // 알림 예약 메서드 (일정 삭제 코드가 있으면 제거)
+    // 알림 예약
     @SuppressLint("ScheduleExactAlarm")
-    public static void scheduleNotification(Context context, String title, String message, long timeInMillis) {
-        Intent intent = new Intent(context, NotificationReceiver.class);
+    public void scheduleNotification(Context context, String title, String message, long timeInMillis) {
+
+        Intent intent = new Intent(context, NotificationReceiver.class); // 알림을 받을 리시버
         intent.putExtra("title", title);
         intent.putExtra("message", message);
 
+        // 알림을 받기 위한 PendingIntent
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
+                context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent);
         }
     }
 }
