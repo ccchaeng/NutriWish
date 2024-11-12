@@ -22,9 +22,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.DocumentReference;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CalendarFragment extends Fragment {
 
@@ -144,6 +151,13 @@ public class CalendarFragment extends Fragment {
                     tasks.add(newTask);
                     taskListAdapter.notifyDataSetChanged();
                     Toast.makeText(getContext(), "일정이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+
+                    // 알림 시간 설정 -> 밀리초로 변환하기
+                    long notificationTimeInMillis = convertTimeToMillis(selectedDate, selectedTime);
+
+                    // 알림 예약
+                    MyFirebaseMessagingService firebaseService = new MyFirebaseMessagingService();
+                    firebaseService.scheduleNotification(getContext(), taskName + " 복용하세요!", taskMemo, notificationTimeInMillis);
                 }).addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "일정 저장 실패", Toast.LENGTH_SHORT).show();
                 });
@@ -157,6 +171,19 @@ public class CalendarFragment extends Fragment {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    // 날짜와 시간을 밀리초로 변환하는 함수
+    private long convertTimeToMillis(String date, String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
+        try {
+            Date parsedDate = sdf.parse(date + " " + time);
+            return parsedDate != null ? parsedDate.getTime() : 0;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 
     private void showTaskDetailsDialog(CalendarTaskItem taskItem) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
