@@ -7,7 +7,7 @@ public class Supplement implements Serializable {
     private String benefits;
     private String usage;
     private String precautions;
-    private boolean isFavorite; // Field to indicate if this supplement is marked as favorite
+    private boolean isFavorite; // Indicates if this supplement is marked as favorite
 
     // Constructor with all fields
     public Supplement(String name, String benefits, String usage, String precautions) {
@@ -15,10 +15,10 @@ public class Supplement implements Serializable {
         this.benefits = benefits;
         this.usage = usage;
         this.precautions = precautions;
-        this.isFavorite = false; // Default value is false
+        this.isFavorite = false; // Default to not favorite
     }
 
-    // Constructor with only the name field (for potential future uses)
+    // Constructor with only the name field (for flexibility in future uses)
     public Supplement(String name) {
         this(name, "", "", "");
     }
@@ -45,7 +45,7 @@ public class Supplement implements Serializable {
     }
 
     public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
+        this.isFavorite = favorite;
     }
 
     // Method to toggle favorite status
@@ -53,7 +53,7 @@ public class Supplement implements Serializable {
         this.isFavorite = !this.isFavorite;
     }
 
-    // Override toString() to return the supplement name for display purposes
+    // Override toString() for displaying the supplement name in lists
     @Override
     public String toString() {
         return name;
