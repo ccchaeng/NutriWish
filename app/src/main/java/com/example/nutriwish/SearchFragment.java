@@ -45,9 +45,7 @@ public class SearchFragment extends Fragment {
 
         // Initialize SearchAdapter with item click and favorite toggle functionality
         searchAdapter = new SearchAdapter(getContext(), new ArrayList<>(),
-                supplementName -> openSupplementDetail(supplementName),
-                supplementName -> toggleFavorite(supplementName)
-        );
+                supplementData, this::openSupplementDetail, this::toggleFavorite);
         resultListView.setAdapter(searchAdapter);
 
         // Set click listeners for search and favorites buttons
@@ -71,30 +69,57 @@ public class SearchFragment extends Fragment {
                 allSupplements.put(supplement.getName(), supplement);
             }
         }
-
         return allSupplements;
     }
 
-    // Method to filter search results based on query
+    // Method to filter search results based on query with support for Hangul initials matching
     private void filterSearchResults(String query) {
         List<String> filteredResults = new ArrayList<>();
+
         if (!query.isEmpty()) {
             for (String suggestion : suggestions) {
-                if (suggestion.toLowerCase().contains(query.toLowerCase())) {
+                if (matchesHangulInitials(suggestion, query) || suggestion.toLowerCase().contains(query.toLowerCase())) {
                     filteredResults.add(suggestion);
                 }
             }
         }
+
         searchAdapter.clear();
         searchAdapter.addAll(filteredResults);
         searchAdapter.notifyDataSetChanged();
     }
 
+    // Helper method to check if the Hangul initials in the suggestion match the query
+    private boolean matchesHangulInitials(String suggestion, String query) {
+        String initials = getHangulInitials(suggestion);
+        String queryInitials = getHangulInitials(query);
+
+        return initials.contains(queryInitials);
+    }
+
+    // Method to extract Hangul initials from a Korean string
+    private String getHangulInitials(String text) {
+        StringBuilder initials = new StringBuilder();
+
+        for (char ch : text.toCharArray()) {
+            if (ch >= 0xAC00 && ch <= 0xD7A3) {  // Check if character is Hangul
+                int base = ch - 0xAC00;
+                char initial = (char) ((base / 28 / 21) + 0x1100);
+                initials.append(initial);
+            } else {
+                initials.append(ch); // Append non-Hangul characters as is
+            }
+        }
+
+        return initials.toString();
+    }
+
     // Toggle the favorite status of a supplement
-    private void toggleFavorite(String supplementName) {
+    private void toggleFavorite(String supplementName, boolean isFavorite) {
         Supplement supplement = supplementData.get(supplementName);
         if (supplement != null) {
-            supplement.setFavorite(!supplement.isFavorite());  // Toggle favorite status
+            supplement.setFavorite(isFavorite); // Set favorite status
+            searchAdapter.notifyDataSetChanged(); // Refresh adapter to show updated status
         }
     }
 
