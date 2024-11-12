@@ -5,71 +5,79 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.List;
+import java.util.Map;
 
 public class SearchAdapter extends ArrayAdapter<String> {
 
+    private final List<String> supplements;
+    private final Map<String, Supplement> supplementData; // Supplement data for favorite status
     private final OnItemClickListener onItemClickListener;
-    private final OnFavoriteClickListener onFavoriteClickListener;
+    private final OnFavoriteToggleListener onFavoriteToggleListener;
 
-    // ViewHolder pattern to optimize list item performance
-    private static class ViewHolder {
-        TextView textView;
-        ImageButton favoriteButton;
-    }
-
-    // Listener interface for item clicks
     public interface OnItemClickListener {
         void onItemClick(String supplementName);
     }
 
-    // Listener interface for favorite button clicks
-    public interface OnFavoriteClickListener {
-        void onFavoriteClick(String supplementName);
+    public interface OnFavoriteToggleListener {
+        void onFavoriteToggle(String supplementName, boolean isFavorite);
     }
 
-    // Adapter constructor
-    public SearchAdapter(Context context, List<String> suggestions, OnItemClickListener itemListener, OnFavoriteClickListener favoriteListener) {
-        super(context, 0, suggestions);
+    public SearchAdapter(Context context, List<String> supplements, Map<String, Supplement> supplementData,
+                         OnItemClickListener itemListener, OnFavoriteToggleListener favoriteToggleListener) {
+        super(context, 0, supplements);
+        this.supplements = supplements;
+        this.supplementData = supplementData;
         this.onItemClickListener = itemListener;
-        this.onFavoriteClickListener = favoriteListener;
+        this.onFavoriteToggleListener = favoriteToggleListener;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-
         if (convertView == null) {
-            // Inflate the item layout and initialize the ViewHolder
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_supplement, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.textView = convertView.findViewById(R.id.text1);  // Update to match actual ID
-            viewHolder.favoriteButton = convertView.findViewById(R.id.favoriteButton);
+            viewHolder.supplementNameText = convertView.findViewById(R.id.supplementNameText);
+            viewHolder.favoriteToggleButton = convertView.findViewById(R.id.favoriteToggleButton);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
         String supplementName = getItem(position);
-        viewHolder.textView.setText(supplementName);
+        viewHolder.supplementNameText.setText(supplementName);
 
-        // Set up click listener for the entire item
+        // Set ToggleButton state based on whether the supplement is favorited
+        Supplement supplement = supplementData.get(supplementName);
+        if (supplement != null) {
+            viewHolder.favoriteToggleButton.setChecked(supplement.isFavorite());
+        }
+
+        // Click listener for the item itself
         convertView.setOnClickListener(v -> {
             if (supplementName != null) {
                 onItemClickListener.onItemClick(supplementName);
             }
         });
 
-        // Set up click listener for the favorite button
-        viewHolder.favoriteButton.setOnClickListener(v -> {
-            if (supplementName != null) {
-                onFavoriteClickListener.onFavoriteClick(supplementName);
+        // Toggle favorite status when ToggleButton is clicked
+        viewHolder.favoriteToggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (supplementName != null && supplement != null) {
+                supplement.setFavorite(isChecked); // Update favorite status
+                onFavoriteToggleListener.onFavoriteToggle(supplementName, isChecked); // Notify fragment
             }
         });
 
         return convertView;
+    }
+
+    // ViewHolder class for optimized view reuse
+    private static class ViewHolder {
+        TextView supplementNameText;
+        ToggleButton favoriteToggleButton;
     }
 }
