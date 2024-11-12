@@ -11,6 +11,8 @@
         android:id="@+id/button_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_color"
+        android:textColor="@color/button_text"
         android:text="뒤로가기"
         android:textSize="16sp"
         android:layout_marginBottom="16dp" />
@@ -56,6 +58,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/button_color"
+            android:textColor="@color/button_text"
             android:text="효능"
             android:layout_marginEnd="4dp" />
 
@@ -64,6 +68,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/button_color"
+            android:textColor="@color/button_text"
             android:text="복용법"
             android:layout_marginEnd="4dp"
             android:layout_marginStart="4dp" />
@@ -73,6 +79,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/button_color"
+            android:textColor="@color/button_text"
             android:text="주의사항"
             android:layout_marginStart="4dp" />
     </LinearLayout>
@@ -100,12 +108,16 @@
             android:id="@+id/button_previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/button_color"
+            android:textColor="@color/button_text"
             android:text="이전" />
 
         <Button
             android:id="@+id/button_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/button_color"
+            android:textColor="@color/button_text"
             android:text="다음"
             android:layout_marginStart="16dp" />
     </LinearLayout>
