@@ -15,7 +15,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         String title = intent.getStringExtra("title");
         String message = intent.getStringExtra("message");
 
-        // 알림 생성
+        // 알림 생성 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "nutriwish_channel")
                 .setSmallIcon(R.drawable.logo) // ic_notification은 적절한 리소스로 교체
                 .setContentTitle(title)
