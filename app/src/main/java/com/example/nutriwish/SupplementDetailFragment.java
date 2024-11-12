@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ public class SupplementDetailFragment extends Fragment {
     private String benefits;
     private String usage;
     private String precautions;
+    private boolean isFavorite;
 
     private int currentIndex;
     private int minIndex;
@@ -34,11 +36,11 @@ public class SupplementDetailFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_supplement_detail, container, false);
 
-        // 뒤로가기 버튼 설정
+        // Back button setup
         Button backButton = view.findViewById(R.id.button_back);
         backButton.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
-        // Supplement 정보 받음
+        // Retrieve supplement info from the bundle
         Bundle bundle = getArguments();
         if (bundle != null) {
             supplements = (List<Supplement>) bundle.getSerializable("supplements");
@@ -46,15 +48,16 @@ public class SupplementDetailFragment extends Fragment {
             minIndex = bundle.getInt("minIndex", 0);
             maxIndex = bundle.getInt("maxIndex", supplements.size() - 1);
 
-            // 현재 인덱스의 영양제 정보 설정
+            // Set current supplement details
             Supplement currentSupplement = supplements.get(currentIndex);
             supplementName = currentSupplement.getName();
             benefits = currentSupplement.getBenefits();
             usage = currentSupplement.getUsage();
             precautions = currentSupplement.getPrecautions();
+            isFavorite = currentSupplement.isFavorite();
         }
 
-        // View 참조
+        // View references
         TextView supplementTitle = view.findViewById(R.id.supplement_title);
         ImageView supplementImage = view.findViewById(R.id.supplement_image);
         TextView textContent = view.findViewById(R.id.text_content);
@@ -63,30 +66,32 @@ public class SupplementDetailFragment extends Fragment {
         Button buttonPrecautions = view.findViewById(R.id.button_precautions);
         Button buttonPrevious = view.findViewById(R.id.button_previous);
         Button buttonNext = view.findViewById(R.id.button_next);
+        ToggleButton favoriteToggle = view.findViewById(R.id.favorite_toggle);
 
-        // 영양제 이름 설정
+        // Set supplement details
         supplementTitle.setText(supplementName);
-        supplementImage.setImageResource(R.drawable.supplement);
+        supplementImage.setImageResource(R.drawable.supplement);  // Set a default image
+        favoriteToggle.setChecked(isFavorite);
 
-        // 효능 버튼 클릭 리스너
+        // Benefits button listener
         buttonBenefits.setOnClickListener(v -> {
             textContent.setText(benefits);
             textContent.setVisibility(View.VISIBLE);
         });
 
-        // 복용법 버튼 클릭 리스너
+        // Usage button listener
         buttonUsage.setOnClickListener(v -> {
             textContent.setText(usage);
             textContent.setVisibility(View.VISIBLE);
         });
 
-        // 주의사항 버튼 클릭 리스너
+        // Precautions button listener
         buttonPrecautions.setOnClickListener(v -> {
             textContent.setText(precautions);
             textContent.setVisibility(View.VISIBLE);
         });
 
-        // 이전 버튼 클릭 리스너 (해당 카테고리 내에서만 작동)
+        // Previous button listener
         buttonPrevious.setOnClickListener(v -> {
             if (currentIndex > minIndex) {
                 openSupplementDetail(currentIndex - 1);
@@ -96,7 +101,7 @@ public class SupplementDetailFragment extends Fragment {
             }
         });
 
-        // 다음 버튼 클릭 리스너 (해당 카테고리 내에서만 작동)
+        // Next button listener
         buttonNext.setOnClickListener(v -> {
             if (currentIndex < maxIndex) {
                 openSupplementDetail(currentIndex + 1);
@@ -106,9 +111,18 @@ public class SupplementDetailFragment extends Fragment {
             }
         });
 
+        // Favorite toggle button listener
+        favoriteToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (supplements != null && currentIndex < supplements.size()) {
+                Supplement currentSupplement = supplements.get(currentIndex);
+                currentSupplement.setFavorite(isChecked);
+            }
+        });
+
         return view;
     }
 
+    // Open the details of another supplement in the list by updating the fragment
     private void openSupplementDetail(int index) {
         SupplementDetailFragment detailFragment = new SupplementDetailFragment();
         Bundle bundle = new Bundle();
