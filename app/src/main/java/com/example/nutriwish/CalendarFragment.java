@@ -62,8 +62,10 @@ public class CalendarFragment extends Fragment {
         taskList.setLayoutManager(new LinearLayoutManager(getContext()));
         taskList.setAdapter(taskListAdapter);
 
+        addTaskButton.setVisibility(View.VISIBLE);
+
         // 앱 시작 시 Firestore에서 일정 불러오기
-        loadTasksFromFirestore();
+        // loadTasksFromFirestore();
 
         calendarView.setOnDateChangeListener((view1, year, month, dayOfMonth) -> {
             currentSelectedDate = year + "/" + (month + 1) + "/" + dayOfMonth;
@@ -88,26 +90,26 @@ public class CalendarFragment extends Fragment {
         if (!currentSelectedDate.isEmpty()) {
             loadTasksForDate(currentSelectedDate);  // 화면에 다시 돌아왔을 때 현재 선택된 날짜의 일정 데이터를 불러오기
         } else {
-            loadTasksFromFirestore();
+            //loadTasksFromFirestore();
         }
     }
 
-    private void loadTasksFromFirestore() {
-        db.collection("calendar").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                tasks.clear();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    CalendarTaskItem taskItem = document.toObject(CalendarTaskItem.class);
-                    taskItem.setId(document.getId());
-                    tasks.add(taskItem);
-                }
-                taskListAdapter.notifyDataSetChanged();
-                addTaskButton.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(getContext(), "일정을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    private void loadTasksFromFirestore() {
+//        db.collection("calendar").get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                tasks.clear();
+//                for (QueryDocumentSnapshot document : task.getResult()) {
+//                    CalendarTaskItem taskItem = document.toObject(CalendarTaskItem.class);
+//                    taskItem.setId(document.getId());
+//                    tasks.add(taskItem);
+//                }
+//                taskListAdapter.notifyDataSetChanged();
+//                addTaskButton.setVisibility(View.VISIBLE);
+//            } else {
+//                Toast.makeText(getContext(), "일정을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     private void loadTasksForDate(String date) {
         db.collection("calendar").whereEqualTo("date", date).get().addOnCompleteListener(task -> {
