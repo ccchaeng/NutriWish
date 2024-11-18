@@ -22,6 +22,8 @@
         android:layout_height="wrap_content"
         android:background="@color/bottom_nav_bar_color"
         app:itemTextColor="@color/button_text"
+        app:itemTextAppearanceActive="@font/gamtan"
+        app:itemTextAppearanceInactive="@font/gamtan"
         app:itemIconTint="@color/button_text"
         app:menu="@menu/btn_navi_menu"
         app:labelVisibilityMode="labeled" />
