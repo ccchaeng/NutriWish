@@ -1,5 +1,7 @@
 package com.example.nutriwish;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,7 @@ public class SupplementData {
         immunitySupplements.add(new Supplement("에키나시아", "에키나시아는 면역 세포 활성화를 도와 감기 예방에 효과적입니다.", "하루 1-2 캡슐을 물과 함께 섭취하세요.", "임신 중인 경우 복용 전 전문가와 상담하세요."));
         immunitySupplements.add(new Supplement("프로폴리스", "프로폴리스는 항균 및 항염 작용으로 면역력을 강화합니다.", "하루 1-2 스프레이를 입안에 뿌리거나 캡슐을 섭취하세요.", "벌 알레르기가 있는 사람은 주의가 필요합니다."));
         categorySupplements.put("면역 강화", immunitySupplements);
+
 
         // 피로 회복 카테고리
         List<Supplement> fatigueSupplements = new ArrayList<>();
