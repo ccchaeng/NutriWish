@@ -31,6 +31,7 @@
                 android:layout_marginRight="40dp"
                 android:layout_weight="0.5"
                 android:text="뒤로가기"
+                android:fontFamily="@font/kcchanbit"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
 
@@ -41,6 +42,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="2"
                 android:text="회원가입"
+                android:fontFamily="@font/kcchanbit"
                 android:textColor="@color/black"
                 android:textSize="25dp" />
         </LinearLayout>
@@ -63,6 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:hint=" 이메일"
+                    android:fontFamily="@font/kcchanbit"
                     android:inputType="textPersonName"
                     android:padding="10dp"
                     android:textColor="@color/black"
@@ -74,6 +77,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:hint="비밀번호"
+                    android:fontFamily="@font/kcchanbit"
                     android:inputType="textCapWords"
                     android:padding="10dp"
                     android:textColor="@color/black"
@@ -91,6 +95,7 @@
                         android:layout_marginBottom="20dp"
                         android:ems="10"
                         android:hint=" 비밀번호 다시 입력"
+                        android:fontFamily="@font/kcchanbit"
                         android:inputType="textPassword"
                         android:text="" />
 
@@ -100,6 +105,7 @@
                         android:layout_height="30dp"
                         android:layout_marginLeft="10dp"
                         android:text="확인"
+                        android:fontFamily="@font/kcchanbit"
                         android:background="@color/button_color"
                         android:textColor="@color/button_text"
                         android:textSize="16sp"
@@ -112,6 +118,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:hint="이름"
+                    android:fontFamily="@font/kcchanbit"
                     android:inputType="textCapWords"
                     android:padding="10dp"
                     android:textColor="@color/black"
@@ -128,6 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:fontFamily="@font/kcchanbit"
                         android:text="남자"/>
 
                     <RadioButton
@@ -135,6 +143,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:fontFamily="@font/kcchanbit"
                         android:text="여자"/>
                 </RadioGroup>
 
@@ -144,6 +153,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="생년월일 (YYYY-MM-DD)"
+                    android:fontFamily="@font/kcchanbit"
                     android:inputType="date" />
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -153,6 +163,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_gravity="center"
                     android:text="회원가입"
+                    android:fontFamily="@font/kcchanbit"
                     android:background="@color/button_color"
                     android:textColor="@color/button_text"
                     android:textSize="16sp"
