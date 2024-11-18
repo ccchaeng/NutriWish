@@ -1,6 +1,8 @@
 // CategoryDetailFragment.java
 package com.example.nutriwish;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -61,6 +64,24 @@ public class CategoryDetailFragment extends Fragment {
             Supplement supplement = supplements.get(i);
             Button button = new Button(getContext());
             button.setText(supplement.getName());
+
+            // 버튼 색상
+            button.setBackgroundColor(Color.parseColor("#f3fbf3"));
+
+            // 버튼 폰트
+            Typeface typeface = ResourcesCompat.getFont(getContext(), R.font.gamtan);
+            button.setTypeface(typeface);
+
+            // 버튼 마진 설정
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, // 가로 크기
+                    LinearLayout.LayoutParams.WRAP_CONTENT  // 세로 크기
+            );
+            params.setMargins(20, 20, 20, 0); // left, top, right, bottom
+            button.setLayoutParams(params);
+
+
+
 
             int finalIndex = i;
             button.setOnClickListener(v -> openSupplementDetailFragment(supplements, finalIndex));
