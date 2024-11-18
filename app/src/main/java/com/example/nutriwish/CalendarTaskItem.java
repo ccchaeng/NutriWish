@@ -10,6 +10,7 @@ public class CalendarTaskItem {
     public CalendarTaskItem() {}
 
     public CalendarTaskItem(String id, String taskName, String selectedDate, String selectedTime, String taskMemo) {
+        this.id = id;
         this.taskName = taskName;
         this.date = selectedDate;
         this.time = selectedTime;
