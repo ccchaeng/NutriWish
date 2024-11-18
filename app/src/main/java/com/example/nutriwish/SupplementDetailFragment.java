@@ -1,6 +1,7 @@
-// SupplementDetailFragment.java
 package com.example.nutriwish;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SupplementDetailFragment extends Fragment {
 
@@ -27,6 +30,7 @@ public class SupplementDetailFragment extends Fragment {
     private int minIndex;
     private int maxIndex;
     private List<Supplement> supplements;
+    private Set<String> favoriteSupplements;
 
     @Nullable
     @Override
@@ -38,6 +42,11 @@ public class SupplementDetailFragment extends Fragment {
         Button backButton = view.findViewById(R.id.button_back);
         backButton.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
+        // SharedPreferences로 즐겨찾기 데이터 로드
+        favoriteSupplements = new HashSet<>(requireContext()
+                .getSharedPreferences("favorites", Context.MODE_PRIVATE)
+                .getStringSet("favorites", new HashSet<>()));
+
         // Supplement 정보 받음
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -46,7 +55,6 @@ public class SupplementDetailFragment extends Fragment {
             minIndex = bundle.getInt("minIndex", 0);
             maxIndex = bundle.getInt("maxIndex", supplements.size() - 1);
 
-            // 현재 인덱스의 영양제 정보 설정
             Supplement currentSupplement = supplements.get(currentIndex);
             supplementName = currentSupplement.getName();
             benefits = currentSupplement.getBenefits();
@@ -63,10 +71,25 @@ public class SupplementDetailFragment extends Fragment {
         Button buttonPrecautions = view.findViewById(R.id.button_precautions);
         Button buttonPrevious = view.findViewById(R.id.button_previous);
         Button buttonNext = view.findViewById(R.id.button_next);
+        Button favoriteToggleButton = view.findViewById(R.id.button_favorite_toggle); // 즐겨찾기 버튼
 
         // 영양제 이름 설정
         supplementTitle.setText(supplementName);
         supplementImage.setImageResource(R.drawable.supplement);
+
+        // 즐겨찾기 상태 초기화
+        updateFavoriteButton(favoriteToggleButton);
+
+        // 즐겨찾기 토글 버튼 클릭 리스너
+        favoriteToggleButton.setOnClickListener(v -> {
+            if (favoriteSupplements.contains(supplementName)) {
+                favoriteSupplements.remove(supplementName);
+            } else {
+                favoriteSupplements.add(supplementName);
+            }
+            updateFavoriteButton(favoriteToggleButton);
+            saveFavorites();
+        });
 
         // 효능 버튼 클릭 리스너
         buttonBenefits.setOnClickListener(v -> {
@@ -86,7 +109,7 @@ public class SupplementDetailFragment extends Fragment {
             textContent.setVisibility(View.VISIBLE);
         });
 
-        // 이전 버튼 클릭 리스너 (해당 카테고리 내에서만 작동)
+        // 이전 버튼 클릭 리스너
         buttonPrevious.setOnClickListener(v -> {
             if (currentIndex > minIndex) {
                 openSupplementDetail(currentIndex - 1);
@@ -96,7 +119,7 @@ public class SupplementDetailFragment extends Fragment {
             }
         });
 
-        // 다음 버튼 클릭 리스너 (해당 카테고리 내에서만 작동)
+        // 다음 버튼 클릭 리스너
         buttonNext.setOnClickListener(v -> {
             if (currentIndex < maxIndex) {
                 openSupplementDetail(currentIndex + 1);
@@ -107,6 +130,26 @@ public class SupplementDetailFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void updateFavoriteButton(Button button) {
+        if (favoriteSupplements.contains(supplementName)) {
+            button.setText("즐겨찾기 해제");
+            button.setBackgroundColor(Color.YELLOW); // 버튼 배경색을 노란색으로 설정
+            button.setTextColor(Color.BLACK); // 텍스트 색상은 검은색으로 설정
+        } else {
+            button.setText("즐겨찾기 추가");
+            button.setBackgroundColor(Color.LTGRAY); // 기본 버튼 색상
+            button.setTextColor(Color.BLACK); // 텍스트 색상은 검은색으로 유지
+        }
+    }
+
+    private void saveFavorites() {
+        requireContext()
+                .getSharedPreferences("favorites", Context.MODE_PRIVATE)
+                .edit()
+                .putStringSet("favorites", favoriteSupplements)
+                .apply();
     }
 
     private void openSupplementDetail(int index) {
