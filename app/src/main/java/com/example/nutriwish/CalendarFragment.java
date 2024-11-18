@@ -205,6 +205,19 @@ public class CalendarFragment extends Fragment {
         // 수정 모드 전환 버튼 추가
         builder.setNeutralButton("수정", null);
 
+        // 삭제 버튼 추가
+        builder.setNegativeButton("삭제", (dialog, which) -> {
+            db.collection("calendar").document(taskItem.getId()).delete()
+                    .addOnSuccessListener(aVoid -> {
+                        tasks.remove(taskItem);
+                        taskListAdapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "일정 삭제 실패", Toast.LENGTH_SHORT).show();
+                    });
+        });
+
         builder.setPositiveButton("확인", (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
@@ -227,16 +240,19 @@ public class CalendarFragment extends Fragment {
                     taskItem.setTaskName(updatedTaskName);
                     taskItem.setTime(updatedTaskTime);
                     taskItem.setMemo(updatedTaskMemo);
-                    db.collection("calendar").document(taskItem.getId()).set(taskItem)
-                            .addOnSuccessListener(aVoid -> {
-                                taskListAdapter.notifyDataSetChanged();
-                                dialog.dismiss();
-                                Toast.makeText(getContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> Toast.makeText(getContext(), "일정 수정 실패", Toast.LENGTH_SHORT).show());
-                } else {
-                    // 이름이나 시간이 비어 있을 경우의 경고 메시지
-                    Toast.makeText(getContext(), "영양제 이름과 시간을 입력하세요.", Toast.LENGTH_SHORT).show();
+
+                    if(taskItem.getId() != null){
+                        db.collection("calendar").document(taskItem.getId()).set(taskItem)
+                                .addOnSuccessListener(aVoid -> {
+                                    taskListAdapter.notifyDataSetChanged();
+                                    dialog.dismiss();
+                                    Toast.makeText(getContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(getContext(), "일정 수정 실패", Toast.LENGTH_SHORT).show());
+                    } else {
+                        // 이름이나 시간이 비어 있을 경우의 경고 메시지
+                        Toast.makeText(getContext(), "영양제 이름과 시간을 입력하세요.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         });
