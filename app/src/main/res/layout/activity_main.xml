@@ -10,7 +10,7 @@
 
     <!-- Fragment 부분 -->
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/fragment_nt"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
@@ -22,8 +22,6 @@
         android:layout_height="wrap_content"
         android:background="@color/bottom_nav_bar_color"
         app:itemTextColor="@color/button_text"
-        app:itemTextAppearanceActive="@font/gamtan"
-        app:itemTextAppearanceInactive="@font/gamtan"
         app:itemIconTint="@color/button_text"
         app:menu="@menu/btn_navi_menu"
         app:labelVisibilityMode="labeled" />
