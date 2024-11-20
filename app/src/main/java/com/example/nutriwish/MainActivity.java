@@ -16,12 +16,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         // BottomNavigationView 참조
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+        Log.e("test", String.valueOf(findViewById(R.id.fragment_nt)));
+
         // 기본으로 로드될 프래그먼트 설정
-        loadFragment(new CategoryFragment());
+        loadFragment(new CategorySlideFragment());
 
         // 아이템 선택 리스너 설정
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -30,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 Fragment selectedFragment = null;
 
                 if (item.getItemId() == R.id.tab_category) {
-                    selectedFragment = new CategoryFragment();
+                    selectedFragment = new CategorySlideFragment();
                 } else if (item.getItemId() == R.id.tab_search) {
                     selectedFragment = new SearchFragment();
                 } else if (item.getItemId() == R.id.tab_calendar) {
@@ -54,10 +60,10 @@ public class MainActivity extends AppCompatActivity {
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
+                    .replace(R.id.fragment_nt, fragment)
                     .commit();
         } else {
-            Log.e("MainActivity", "Attempted to load a null fragment");
+            Log.e("test", "Fragment가 없음. 로드되지 않음.");
         }
     }
 }
