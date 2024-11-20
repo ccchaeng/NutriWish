@@ -99,7 +99,7 @@ public class CategoryDetailFragment extends Fragment {
         detailFragment.setArguments(bundle);
 
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, detailFragment);
+        transaction.replace(R.id.fragment_nt, detailFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
