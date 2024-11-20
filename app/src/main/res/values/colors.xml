@@ -7,4 +7,7 @@
     <color name="bottom_nav_bar_color">#c8e6c8</color>
     <color name="button_color">#c2d9ce</color>
     <color name="button_text">#3d4a3d</color>
+    <color name="calendar_back">#f3fbf3</color>
+    <color name="star">#e3f0ff</color>
+    <color name="tab_color">#7fd1ae</color>
 </resources>
