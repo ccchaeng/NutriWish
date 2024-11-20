@@ -87,9 +87,16 @@ public class UserFragment extends Fragment {
 
         // 로그아웃 버튼 클릭 시 파이어베이스 로그아웃 처리
         btnLogout.setOnClickListener(v -> {
-            mAuth.signOut();
-            // 로그아웃 후 로그인 화면으로 이동
+            mAuth.signOut(); // 파이어베이스 로그아웃 처리
             Toast.makeText(getContext(), "로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
+
+            // 로그인 화면으로 이동
+            Intent intent = new Intent(getContext(), LoginActivity.class); // LoginActivity로 이동
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+
+            // 현재 Activity 종료
+            getActivity().finish();
         });
 
         return view;
