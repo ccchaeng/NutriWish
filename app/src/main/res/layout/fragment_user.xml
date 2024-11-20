@@ -27,6 +27,7 @@
         android:layout_marginStart="16dp"
         android:padding="8dp"
         android:text="이름"
+        android:fontFamily="@font/gamtan"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/profileImage"
         app:layout_constraintTop_toTopOf="@id/profileImage" />
@@ -36,6 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="이름 입력"
+        android:fontFamily="@font/kcchanbit"
         android:enabled="false"
         android:padding="8dp"
         android:minHeight="48dp"
@@ -53,6 +55,7 @@
         android:layout_marginTop="16dp"
         android:padding="8dp"
         android:text="생년월일"
+        android:fontFamily="@font/gamtan"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/profileImage"
         app:layout_constraintTop_toBottomOf="@id/tvName" />
@@ -62,6 +65,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="생년월일 입력"
+        android:fontFamily="@font/kcchanbit"
         android:enabled="false"
         android:padding="8dp"
         android:minHeight="48dp"
@@ -77,6 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="이메일"
+        android:fontFamily="@font/gamtan"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/etBirthDate" />
@@ -88,6 +93,7 @@
         android:layout_marginTop="16dp"
         android:enabled="false"
         android:hint="이메일"
+        android:fontFamily="@font/kcchanbit"
         android:padding="8dp"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,6 +108,7 @@
         android:layout_marginTop="32dp"
         android:padding="8dp"
         android:text="성별"
+        android:fontFamily="@font/gamtan"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/etId" />
@@ -122,6 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="남자"
+            android:fontFamily="@font/kcchanbit"
             android:enabled="false" />
 
         <RadioButton
@@ -129,6 +137,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="여자"
+            android:fontFamily="@font/kcchanbit"
             android:enabled="false" />
     </RadioGroup>
 
@@ -139,6 +148,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="수정"
+        android:fontFamily="@font/gamtan"
         android:backgroundTint="@color/colorEdit"
         android:textColor="@color/button_text"
         app:layout_constraintTop_toBottomOf="@id/rgGender"
@@ -152,6 +162,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="저장"
+        android:fontFamily="@font/gamtan"
         android:backgroundTint="@color/colorSave"
         android:textColor="@color/button_text"
         android:enabled="false"
@@ -166,6 +177,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="로그아웃"
+        android:fontFamily="@font/gamtan"
         android:backgroundTint="@color/button_color"
         android:textColor="@color/button_text"
         app:layout_constraintTop_toBottomOf="@id/btnSave"
