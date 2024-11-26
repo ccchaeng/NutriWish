@@ -28,7 +28,9 @@
 <b>달력</b>
 - 영양제 복용 일정을 추가하여 손쉽게 영양제 복용 관리를 할 수 있습니다.
 <br>
-<!-- 이미지 삽입 -->
+
+![image](https://github.com/user-attachments/assets/cdf0dfcf-b11b-4248-baec-69204c7682d6)
+
 <hr>
 
 <b>정보</b>
