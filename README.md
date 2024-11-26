@@ -12,7 +12,7 @@
 - 영양제를 키워드별로 분류하여 자신의 몸 상태에 필요한 영양제를 손쉽게 찾아볼 수 있습니다.
 <br>
 
-<!-- 이미지 삽입 -->
+![image](https://github.com/user-attachments/assets/96df2f8d-7cc0-46f1-9668-95bdaab2475d)
 
 <hr>
 
